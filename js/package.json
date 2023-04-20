@@ -2,9 +2,10 @@
   "name": "crypto-trading",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "npx nodemon index"
+    "start": "npx nodemon -r dotenv/config server"
   },
   "keywords": [],
   "author": "",

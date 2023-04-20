@@ -29,8 +29,8 @@ def neworder(operation):
 
 
 def currentandpreviousRSI(currentRSI, previousRSI):
-    print("RSI Atual:", currentRSI)
-    print("RSI Anterior:", previousRSI)
+    print("Current RSI:", currentRSI)
+    print("Previous RSI:", previousRSI)
 
 
 while 1 == 1:
