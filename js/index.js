@@ -47,10 +47,19 @@ async function newOrder(quantity, side) {
       headers: { "X-MBX-APIKEY": process.env.API_KEY },
     });
     console.log(result.data.side);
-    console.log("$", result.data.cummulativeQuoteQty);
-    return result.data.cummulativeQuoteQty;
+    console.log("$" + result.data.cummulativeQuoteQty);
+    return {
+      usdPaid: result.data.cummulativeQuoteQty,
+      origQty: result.data.origQty,
+    };
   } catch (e) {
-    console.error("Error: ", e.message + ", ", e.response.data.msg);
+    const errorMessage = `Error: ${e.message}, ${e.response.data.msg}`;
+    insertLogInDatabase(
+      errorMessage,
+      side,
+      new Date(timestamp).toLocaleString("pt-br")
+    );
+    console.error(errorMessage);
   }
 }
 
@@ -66,15 +75,17 @@ const handleRequest = async (operation, res) => {
   const date = new Date(Date.now()).toLocaleString("pt-br");
   console.log(date);
   const minOperation = minimalOperation(currentPrice);
-  const usdPaid = await newOrder(minOperation, operation);
+  const response = await newOrder(minOperation, operation);
+  const usdPaid = response.usdPaid;
+  const origQty = response.origQty;
   if (!usdPaid) {
     res.send({ error: "An error has occurred." });
     return;
   }
   const handleResponse = operation === "SELL" ? "VENDIDO" : "COMPRADO";
-  console.log(handleResponse, minOperation + " BTC À $" + currentPrice);
+  console.log(handleResponse, origQty + " BTC À $" + currentPrice);
   res.send({ operation, currentPrice });
-  insertTransactionInDatabase(usdPaid, minOperation, currentPrice, oper, date);
+  insertTransactionInDatabase(usdPaid, origQty, currentPrice, oper, date);
 };
 
 app.use("/sell", async (req, res, next) => {
@@ -102,6 +113,9 @@ const db = new sqlite3.Database("./data.db", sqlite3.OPEN_READWRITE, (err) => {
 //   "CREATE TABLE transactions (qty_usd, qty_btc, price_btc, operation, time)"
 // );
 
+// CREATE TABLE
+// db.run("CREATE TABLE logs (message, operation, time)");
+
 const insertTransactionInDatabase = (
   usdPaid,
   minimalOperation,
@@ -119,4 +133,13 @@ const insertTransactionInDatabase = (
       console.log("Data successfully inserted");
     }
   );
+};
+
+const insertLogInDatabase = (message, operation, date) => {
+  const sql = `INSERT INTO logs (message, operation, time) VALUES(?,?,?)`;
+
+  db.run(sql, [message, operation, date], (err) => {
+    if (err) return console.error(err.message);
+    console.log("Data successfully inserted");
+  });
 };
