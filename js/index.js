@@ -68,7 +68,7 @@ const handleRequest = async (operation, res) => {
   const minOperation = minimalOperation(currentPrice);
   const usdPaid = await newOrder(minOperation, operation);
   if (!usdPaid) {
-    res.send({ error: "Ocorreu um Erro." });
+    res.send({ error: "An error has occurred." });
     return;
   }
   const handleResponse = operation === "SELL" ? "VENDIDO" : "COMPRADO";
@@ -86,7 +86,7 @@ app.use("/buy", async (req, res, next) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log("Server iniciado na porta " + process.env.PORT);
+  console.log("Server started at " + process.env.PORT);
 });
 
 ////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE///////

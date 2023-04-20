@@ -12,6 +12,7 @@ url = 'http://localhost:3003/'
 
 previousRSI = 0
 currentRSI = 0
+print('Application started.')
 
 
 def hour():
