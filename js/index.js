@@ -46,10 +46,11 @@ async function newOrder(quantity, side) {
       url: `${process.env.API_URL}/v3/order${qs}`,
       headers: { "X-MBX-APIKEY": process.env.API_KEY },
     });
+    console.log(result.data.side);
     console.log("$", result.data.cummulativeQuoteQty);
     return result.data.cummulativeQuoteQty;
   } catch (e) {
-    console.error(e);
+    console.error("Error: ", e.message + ", ", e.response.data.msg);
   }
 }
 
@@ -59,28 +60,29 @@ const app = express();
 
 app.use(express.json());
 
-app.use("/sell", async (req, res, next) => {
-  const oper = "sell";
+const handleRequest = async (operation, res) => {
+  console.log("-------------------------------------------------");
+  const oper = operation;
   const date = new Date(Date.now()).toLocaleString("pt-br");
   console.log(date);
   const minOperation = minimalOperation(currentPrice);
-  const usdPaid = await newOrder(minOperation, "SELL");
-  console.log("VENDIDO " + minOperation + " BTC À $" + currentPrice);
-  res.send({ sell: true, currentPrice });
+  const usdPaid = await newOrder(minOperation, operation);
+  if (!usdPaid) {
+    res.send({ error: "Ocorreu um Erro." });
+    return;
+  }
+  const handleResponse = operation === "SELL" ? "VENDIDO" : "COMPRADO";
+  console.log(handleResponse, minOperation + " BTC À $" + currentPrice);
+  res.send({ operation, currentPrice });
   insertTransactionInDatabase(usdPaid, minOperation, currentPrice, oper, date);
-  console.log("-------------------------------------------------");
+};
+
+app.use("/sell", async (req, res, next) => {
+  await handleRequest("SELL", res);
 });
 
 app.use("/buy", async (req, res, next) => {
-  const oper = "buy";
-  const date = new Date(Date.now()).toLocaleString("pt-br");
-  console.log(date);
-  const minOperation = minimalOperation(currentPrice);
-  const usdPaid = await newOrder(minOperation, "BUY");
-  console.log("COMPRADO " + minOperation + "BTC À $" + currentPrice);
-  res.send({ buy: true, currentPrice });
-  insertTransactionInDatabase(usdPaid, minOperation, currentPrice, oper, date);
-  console.log("-------------------------------------------------");
+  await handleRequest("BUY", res);
 });
 
 app.listen(process.env.PORT, () => {
