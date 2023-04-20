@@ -47,6 +47,7 @@ async function newOrder(quantity, side) {
       headers: { "X-MBX-APIKEY": process.env.API_KEY },
     });
     console.log("$", result.data.cummulativeQuoteQty);
+    return result.data.cummulativeQuoteQty;
   } catch (e) {
     console.error(e);
   }
@@ -59,25 +60,61 @@ const app = express();
 app.use(express.json());
 
 app.use("/sell", async (req, res, next) => {
-  console.log(new Date(Date.now()).toLocaleString("pt-br"));
-  await newOrder(minimalOperation(currentPrice), "SELL");
-  console.log(
-    "VENDIDO " + minimalOperation(currentPrice) + " BTC À $" + currentPrice
-  );
+  const oper = "sell";
+  const date = new Date(Date.now()).toLocaleString("pt-br");
+  console.log(date);
+  const minOperation = minimalOperation(currentPrice);
+  const usdPaid = await newOrder(minOperation, "SELL");
+  console.log("VENDIDO " + minOperation + " BTC À $" + currentPrice);
   res.send({ sell: true, currentPrice });
+  insertTransactionInDatabase(usdPaid, minOperation, currentPrice, oper, date);
   console.log("-------------------------------------------------");
 });
 
 app.use("/buy", async (req, res, next) => {
-  console.log(new Date(Date.now()).toLocaleString("pt-br"));
-  await newOrder(minimalOperation(currentPrice), "BUY");
-  console.log(
-    "COMPRADO " + minimalOperation(currentPrice) + "BTC À $" + currentPrice
-  );
+  const oper = "buy";
+  const date = new Date(Date.now()).toLocaleString("pt-br");
+  console.log(date);
+  const minOperation = minimalOperation(currentPrice);
+  const usdPaid = await newOrder(minOperation, "BUY");
+  console.log("COMPRADO " + minOperation + "BTC À $" + currentPrice);
   res.send({ buy: true, currentPrice });
+  insertTransactionInDatabase(usdPaid, minOperation, currentPrice, oper, date);
   console.log("-------------------------------------------------");
 });
 
 app.listen(process.env.PORT, () => {
   console.log("Server iniciado na porta " + process.env.PORT);
 });
+
+////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE////////DATABASE///////
+
+const sqlite3 = require("sqlite3").verbose();
+const db = new sqlite3.Database("./data.db", sqlite3.OPEN_READWRITE, (err) => {
+  if (err) return console.error(err.message);
+  console.log("Database connected");
+});
+
+// CREATE TABLE
+// db.run(
+//   "CREATE TABLE transactions (qty_usd, qty_btc, price_btc, operation, time)"
+// );
+
+const insertTransactionInDatabase = (
+  usdPaid,
+  minimalOperation,
+  currentPrice,
+  operation,
+  date
+) => {
+  const sql = `INSERT INTO transactions (qty_usd, qty_btc, price_btc, operation, time) VALUES(?,?,?,?,?)`;
+
+  db.run(
+    sql,
+    [usdPaid, minimalOperation, currentPrice, operation, date],
+    (err) => {
+      if (err) return console.error(err.message);
+      console.log("Data successfully inserted");
+    }
+  );
+};
