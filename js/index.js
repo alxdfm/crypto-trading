@@ -18,7 +18,7 @@ ws.onmessage = async (event) => {
 
 function minimalOperation(price) {
   const min = 11 / price;
-  return String(min.toFixed(4));
+  return String(min.toFixed(6));
 }
 
 async function newOrder(quantity, side) {
