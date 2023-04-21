@@ -8,14 +8,7 @@ export class TransactionsService {
     this.db = new SQLiteDatabase();
   }
 
-  async newOrder(quantity, side) {
-    const data = {
-      symbol: process.env.SYMBOL_BTCUSDT,
-      type: "MARKET",
-      side,
-      quantity,
-    };
-
+  buildQs = (data) => {
     const timestamp = Date.now();
     const recvWindow = 10000;
 
@@ -25,7 +18,19 @@ export class TransactionsService {
       .digest("hex");
 
     const newData = { ...data, timestamp, recvWindow, signature };
-    const qs = `?${new URLSearchParams(newData)}`;
+    return `?${new URLSearchParams(newData)}`;
+  };
+
+  newOrder = async (quantity, side) => {
+    const data = {
+      symbol: process.env.SYMBOL_BTCUSDT,
+      type: "MARKET",
+      side,
+      quantity,
+    };
+    const timestamp = Date.now();
+
+    const qs = this.buildQs(data);
 
     try {
       const result = await axios({
@@ -48,9 +53,26 @@ export class TransactionsService {
       );
       console.error(errorMessage);
     }
-  }
+  };
 
-  handleRequest = async (operation, currentPrice, res) => {
+  //testar em produção
+  balance = async () => {
+    const qs = this.buildQs({});
+
+    try {
+      const result = await axios({
+        method: "GET",
+        url: `${process.env.API_URL}/sapi/v1/accountSnapshot${qs}`,
+        headers: { "X-MBX-APIKEY": process.env.API_KEY },
+      });
+      console.log(result.data);
+    } catch (e) {
+      const errorMessage = `Error: ${e.message}, ${e.response.data.msg}`;
+      console.error(errorMessage);
+    }
+  };
+
+  handleRequestOrder = async (operation, currentPrice, res) => {
     console.log("-------------------------------------------------");
     const oper = operation;
     const date = new Date(Date.now()).toLocaleString("pt-br");
@@ -73,5 +95,10 @@ export class TransactionsService {
       oper,
       date
     );
+  };
+
+  handleRequestBalance = async (res) => {
+    const response = await this.balance();
+    response ? res.send({ success: true }) : res.send({ success: false });
   };
 }

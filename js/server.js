@@ -21,11 +21,15 @@ const app = express();
 app.use(json());
 
 app.use("/sell", async (req, res, next) => {
-  transaction.handleRequest("SELL", currentPrice, res);
+  transaction.handleRequestOrder("SELL", currentPrice, res);
 });
 
 app.use("/buy", async (req, res, next) => {
-  transaction.handleRequest("BUY", currentPrice, res);
+  transaction.handleRequestOrder("BUY", currentPrice, res);
+});
+
+app.use("/balance", async (req, res, next) => {
+  transaction.handleRequestBalance(res);
 });
 
 app.listen(process.env.PORT, () => {
