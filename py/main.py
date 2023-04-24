@@ -15,7 +15,8 @@ output1w = TA_Handler(symbol='BTCUSDT',
 
 url = 'http://localhost:3003/'
 
-price = 0
+previousPrice = 0
+currentPrice = 0
 previousRSI = 0
 currentRSI = 0
 previousEMA20 = 0
@@ -128,9 +129,10 @@ def isPriceAboveEMA200():
         return False
 
 
-def strategyEMA200andMACD():
+def strategyEMA200andMACD(currentPrice, previousPrice):
     priceAboveEMA200 = isPriceAboveEMA200()
     macd = statusMACD()
+
 ## todo: criar estratégias: media 8 semanal, medias 20+50+estocastico, media 200 + macd
 
 while 1 == 1:
@@ -146,7 +148,7 @@ while 1 == 1:
         stochRSI = output15m.get_analysis().indicators['Stoch.RSI.K']
         ema20 = output15m.get_analysis().indicators['EMA20']
         ema50 = output15m.get_analysis().indicators['EMA50']
-        price = output15m.get_analysis().indicators['clsoe']
+        price = output15m.get_analysis().indicators['close']
         
         if previousRSI == 0:
             previousRSI = rsi
