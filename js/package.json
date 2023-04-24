@@ -5,7 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "npx nodemon -r dotenv/config server"
+    "start": "npx nodemon -r dotenv/config server",
+    "prod": "node -r dotenv/config server.js"
   },
   "keywords": [],
   "author": "",

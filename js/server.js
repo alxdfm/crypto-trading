@@ -32,6 +32,6 @@ app.use("/balance", async (req, res, next) => {
   transaction.handleRequestBalance(res);
 });
 
-app.listen(3003, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server started at " + process.env.PORT);
 });
