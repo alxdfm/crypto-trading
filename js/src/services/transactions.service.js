@@ -1,6 +1,6 @@
 import axios from "axios";
 import crypto from "crypto";
-import { SQLiteDatabase } from "../database/DatabaseSQLite.js";
+import { SQLiteDatabase } from "../database/databaseSQLite.js";
 import { minimalOperation } from "../helpers/utils.js";
 
 export class TransactionsService {
