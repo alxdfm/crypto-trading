@@ -1,4 +1,5 @@
 export function minimalOperation(price) {
-  const min = 11 / price;
-  return String(min.toFixed(6));
+  const min = 12 / Number(price);
+  console.log(min, price);
+  return String(min.toFixed(5));
 }

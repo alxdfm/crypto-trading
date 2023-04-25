@@ -2,12 +2,12 @@ from tradingview_ta import TA_Handler, Interval
 import time
 import requests
 
-output15m = TA_Handler(symbol='BTCUSDT',
+output15m = TA_Handler(symbol='BTCBRL',
                     screener='Crypto',
                     exchange='Binance',
                     interval=Interval.INTERVAL_15_MINUTES)
 
-output1w = TA_Handler(symbol='BTCUSDT',
+output1w = TA_Handler(symbol='BTCBRL',
                     screener='Crypto',
                     exchange='Binance',
                     interval=Interval.INTERVAL_1_WEEK)

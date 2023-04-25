@@ -5,7 +5,7 @@ import { TransactionsService } from "./src/services/transactions.service.js";
 const transaction = new TransactionsService();
 
 const ws = new WebSocket(
-  `${process.env.STREAM_URL}/${process.env.SYMBOL_BTCUSDT.toLowerCase()}@ticker`
+  `${process.env.STREAM_URL}/${process.env.SYMBOL.toLowerCase()}@ticker`
 );
 
 let currentPrice = 0;
@@ -14,6 +14,7 @@ ws.onmessage = async (event) => {
   const obj = JSON.parse(event.data);
 
   currentPrice = parseFloat(obj.a);
+  console.log(currentPrice);
 };
 
 const app = express();

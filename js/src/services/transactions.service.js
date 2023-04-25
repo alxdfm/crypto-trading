@@ -23,7 +23,7 @@ export class TransactionsService {
 
   newOrder = async (quantity, side) => {
     const data = {
-      symbol: process.env.SYMBOL_BTCUSDT,
+      symbol: process.env.SYMBOL,
       type: "MARKET",
       side,
       quantity,
@@ -78,13 +78,14 @@ export class TransactionsService {
     const date = new Date(Date.now()).toLocaleString("pt-br");
     console.log(date);
     const minOperation = minimalOperation(currentPrice);
+    console.log(minOperation);
     const response = await this.newOrder(minOperation, operation);
-    const usdPaid = response.usdPaid;
-    const origQty = response.origQty;
-    if (!usdPaid) {
+    if (!response) {
       res.send({ error: "An error has occurred." });
       return;
     }
+    const usdPaid = response.usdPaid;
+    const origQty = response.origQty;
     const handleResponse = operation === "SELL" ? "VENDIDO" : "COMPRADO";
     console.log(handleResponse, origQty + " BTC À $" + currentPrice);
     res.send({ operation, currentPrice });
