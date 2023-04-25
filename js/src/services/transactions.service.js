@@ -78,7 +78,6 @@ export class TransactionsService {
     const date = new Date(Date.now()).toLocaleString("pt-br");
     console.log(date);
     const minOperation = minimalOperation(currentPrice);
-    console.log(minOperation);
     const response = await this.newOrder(minOperation, operation);
     if (!response) {
       res.send({ error: "An error has occurred." });

@@ -23,6 +23,8 @@ currentEMA20 = 0
 previousEMA50 = 0
 currentEMA50 = 0
 currentStochRSI = 0
+evalPreviousMACD = 0
+evalCurrentMACD = 0
 
 print('Application started.')
 
@@ -147,6 +149,13 @@ while 1 == 1:
         ema20 = output15m.get_analysis().indicators['EMA20']
         ema50 = output15m.get_analysis().indicators['EMA50']
         price = output15m.get_analysis().indicators['close']
+        evalMACD = statusMACD()
+              
+        if evalPreviousMACD == 0:
+            evalPreviousMACD = evalMACD
+        else:
+            evalPreviousMACD = evalCurrentMACD
+        evalCurrentMACD = evalMACD 
         
         if previousRSI == 0:
             previousRSI = rsi
@@ -168,9 +177,9 @@ while 1 == 1:
         
         evalRSI = statusRSI(currentRSI, previousRSI)
 
-        if evalRSI == False:
+        if evalRSI == False or (evalMACD == False and evalCurrentMACD != evalPreviousMACD):
             newOrder('sell')
-        if evalRSI == True:
+        if evalRSI == True or (evalMACD == True and evalCurrentMACD != evalPreviousMACD):
             newOrder('buy')
 
         isPriceAboveWeeklyEMA8()
@@ -179,7 +188,5 @@ while 1 == 1:
         isPointedUpEMA20(currentEMA20, previousEMA20)
         isPointedUpEma50(currentEMA50, previousEMA50)
         isEMA20AboveEMA50(currentEMA20, currentEMA50)
-        statusMACD()
-        
 
         print('===================================================')

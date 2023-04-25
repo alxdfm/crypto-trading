@@ -14,7 +14,6 @@ ws.onmessage = async (event) => {
   const obj = JSON.parse(event.data);
 
   currentPrice = parseFloat(obj.a);
-  console.log(currentPrice);
 };
 
 const app = express();
