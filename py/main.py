@@ -1,6 +1,5 @@
 from tradingview_ta import TA_Handler, Interval
 import time
-import winsound
 import requests
 
 output15m = TA_Handler(symbol='BTCUSDT',
