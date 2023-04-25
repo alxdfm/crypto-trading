@@ -35,7 +35,6 @@ def newOrder(operation):
     response = requests.get(url + operation)
     data = response.json()
     print(data)
-    winsound.Beep(5000, 500)
     hour()
 
 
