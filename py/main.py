@@ -12,7 +12,7 @@ output1w = TA_Handler(symbol='BTCBRL',
                     exchange='Binance',
                     interval=Interval.INTERVAL_1_WEEK)
 
-url = 'https://cryptotradingjs-alxdevfm.b4a.run/'
+url = 'http://localhost:3003/'
 
 previousPrice = 0
 currentPrice = 0
