@@ -12,7 +12,7 @@ output1w = TA_Handler(symbol='BTCBRL',
                     exchange='Binance',
                     interval=Interval.INTERVAL_1_WEEK)
 
-url = 'http://localhost:3003/'
+url = 'https://cryptotradingjs-alxdevfm.b4a.run/'
 
 previousPrice = 0
 currentPrice = 0
@@ -182,9 +182,9 @@ while 1 == 1:
         if evalRSI == True or (evalMACD == True and evalCurrentMACD != evalPreviousMACD):
             newOrder('buy')
 
+        statusStochRSI(stochRSI)
         isPriceAboveWeeklyEMA8()
         isPriceAboveEMA200()
-        statusStochRSI(stochRSI)
         isPointedUpEMA20(currentEMA20, previousEMA20)
         isPointedUpEma50(currentEMA50, previousEMA50)
         isEMA20AboveEMA50(currentEMA20, currentEMA50)

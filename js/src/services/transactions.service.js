@@ -57,17 +57,17 @@ export class TransactionsService {
 
   //testar em produção
   balance = async () => {
-    const qs = this.buildQs({});
+    const qs = this.buildQs();
 
     try {
       const result = await axios({
         method: "GET",
-        url: `${process.env.API_URL}/sapi/v1/accountSnapshot${qs}`,
+        url: `${process.env.API_URL}/sapi/v1/capital/config/getall${qs}`,
         headers: { "X-MBX-APIKEY": process.env.API_KEY },
       });
       console.log(result.data);
     } catch (e) {
-      const errorMessage = `Error: ${e.message}, ${e.response.data.msg}`;
+      const errorMessage = `Error: ${e.message}, ${e}`;
       console.error(errorMessage);
     }
   };
